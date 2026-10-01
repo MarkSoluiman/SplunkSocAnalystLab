@@ -1,6 +1,7 @@
 $ErrorActionPreference = "SilentlyContinue"
 
 $labRoot = "C:\Temp\SOC-Lab"
+$now = Get-Date
 New-Item -ItemType Directory -Path $labRoot -Force | Out-Null
 
 $caseNumber = Get-Random -Minimum 100000 -Maximum 999999
@@ -67,7 +68,7 @@ echo SOC-LAB scheduled task $caseNumber ran at %DATE% %TIME%>>"$logFile"
         $payload = @"
 Set-Content -Path '$marker' -Value 'SOC-LAB case $caseNumber'
 try {
-    Invoke-WebRequest -UseBasicParsing -Method Head -Uri 'http://127.0.0.1:8000/' -TimeoutSec 5 | Out-Null
+    Invoke-WebRequest -UseBasicParsing -Method Head -Uri 'https://Google.com/' -TimeoutSec 5 | Out-Null
 } catch {}
 "@
 
@@ -126,6 +127,28 @@ try {
             "/c",
             "whoami /all > `"$outFile`" & echo.>>`"$outFile`" & ipconfig /all >>`"$outFile`" & echo.>>`"$outFile`" & tasklist >>`"$outFile`" & echo.>>`"$outFile`" & net user >>`"$outFile`" & echo.>>`"$outFile`" & arp -a >>`"$outFile`""
         ) -WindowStyle Hidden -Wait
+    }
+
+    7 {
+        $logFile="$labRoot\log_$caseNumber.txt"
+        $response= Invoke-WebRequest -Uri "https://secure.eicar.org/eicar.com" -UseBasicParsing -TimeoutSec 5
+        $plainText=[Text.Encoding]::ASCII.GetString($response.Content)
+        $payload="Set-Content -Path '$labRoot\Update_$caseNumber.exe.txt' -Value '$plainText' -Encoding ASCII -NoNewLine"
+
+
+"Suspicious file downloaded at $($now.ToString('HH:mm:ss')) on $($now.ToString('yyyy-MM-dd'))" | Add-Content -Path $logFile
+
+try {
+    Start-Process -FilePath "powershell.exe" -ArgumentList @(
+    "-NoProfile",
+    "-WindowStyle","Hidden",
+    "-Command", $payload
+    )
+}
+catch {
+    <#Do this if a terminating exception happens#>
+}
+
     }
 }
 

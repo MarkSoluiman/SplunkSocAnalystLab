@@ -5,7 +5,7 @@ $now = Get-Date
 New-Item -ItemType Directory -Path $labRoot -Force | Out-Null
 
 $caseNumber = Get-Random -Minimum 100000 -Maximum 999999
-$scenario = ($caseNumber % 6) + 1
+$scenario = ($caseNumber % 7) + 1
 
 Write-Host ""
 Write-Host "SOC LAB CASE ID: SOC-$caseNumber"

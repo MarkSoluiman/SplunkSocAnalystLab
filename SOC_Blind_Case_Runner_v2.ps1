@@ -5,7 +5,7 @@ $now = Get-Date
 New-Item -ItemType Directory -Path $labRoot -Force | Out-Null
 
 $caseNumber = Get-Random -Minimum 100000 -Maximum 999999
-$scenario = ($caseNumber % 7) + 1
+$scenario = ($caseNumber % 8) + 1
 
 Write-Host ""
 Write-Host "SOC LAB CASE ID: SOC-$caseNumber"
@@ -130,24 +130,83 @@ try {
     }
 
     7 {
-        $logFile="$labRoot\log_$caseNumber.txt"
-        $response= Invoke-WebRequest -Uri "https://secure.eicar.org/eicar.com" -UseBasicParsing -TimeoutSec 5
-        $plainText=[Text.Encoding]::ASCII.GetString($response.Content)
-        $payload="Set-Content -Path '$labRoot\Update_$caseNumber.exe.txt' -Value '$plainText' -Encoding ASCII -NoNewLine"
+        $logFile = "$labRoot\log_$caseNumber.txt"
+        $response = Invoke-WebRequest -Uri "https://secure.eicar.org/eicar.com" -UseBasicParsing -TimeoutSec 5
+        $plainText = [Text.Encoding]::ASCII.GetString($response.Content)
+        $payload = "Set-Content -Path '$labRoot\Update_$caseNumber.exe.txt' -Value '$plainText' -Encoding ASCII -NoNewLine"
 
 
-"Suspicious file downloaded at $($now.ToString('HH:mm:ss')) on $($now.ToString('yyyy-MM-dd'))" | Add-Content -Path $logFile
+        "Suspicious file downloaded at $($now.ToString('HH:mm:ss')) on $($now.ToString('yyyy-MM-dd'))" | Add-Content -Path $logFile
 
-try {
-    Start-Process -FilePath "powershell.exe" -ArgumentList @(
-    "-NoProfile",
-    "-WindowStyle","Hidden",
-    "-Command", $payload
+        try {
+            Start-Process -FilePath "powershell.exe" -ArgumentList @(
+                "-NoProfile",
+                "-WindowStyle", "Hidden",
+                "-Command", $payload
+            )
+        }
+        catch {
+            <#Do this if a terminating exception happens#>
+        }
+
+    }
+
+    8 {
+        Set-Content -Path "$labRoot\Invoices_$caseNumber.txt" -Value 'Invoices of every employee in the company' -NONewLine
+        $Data = @(
+            [pscustomobject]@{ ID = 1; FirstName = "John"; LastName = "Doe"; Role = "Admin" }
+            [pscustomobject]@{ ID = 2; FirstName = "Jane"; LastName = "Smith"; Role = "User" }
+        )
+        $Data | Export-Csv -Path "$labRoot\UsersInfo_$caseNumber.csv" -NoTypeInformation
+
+        $cmdFile = "$labRoot\$caseNumber.cmd"
+
+##CMD Block
+ @'
+@echo off
+
+cd /d "C:\Temp\SOC-Lab"
+
+echo.
+echo Files Found:
+dir *.txt *.csv
+echo.
+
+set "Pass=WW91d2lsbG5ldmVyZ2V0dGhlcGFzc3dvcmRIQUhBIQ=="
+
+for /f "delims=" %%P in ('powershell.exe -NoProfile -Command "[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('%Pass%'))"') do (
+set "ZIP_PASS=%%P"
+)
+
+echo.
+
+for %%F in (*.txt *.csv) do (
+    "C:\Program Files\7-Zip\7z.exe" a -tzip "C:\Temp\SOC-Lab\%%~nF.zip" "%%F" -p%ZIP_PASS% -mem=AES256 && del "%%F"
+
+    if errorlevel 1 (
+        echo Error: Failed to Archive "%%F"
+    ) else (
+        echo Archived "%%F"
     )
-}
-catch {
-    <#Do this if a terminating exception happens#>
-}
+)
+
+echo.
+'@ | Set-Content -Path $cmdFile -Encoding Ascii
+
+
+
+
+cmd.exe /d /c $cmdFile
+
+Start-Process -FilePath "cmd.exe" -ArgumentList @(
+    "/c",
+    "del `"$cmdFile`""
+) -Wait
+
+Write-Host @"
+Someone archived our important files and put password on them
+Can you please help us figuring out the password?
+"@
 
     }
 }

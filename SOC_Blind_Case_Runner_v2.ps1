@@ -5,7 +5,7 @@ $now = Get-Date
 New-Item -ItemType Directory -Path $labRoot -Force | Out-Null
 
 $caseNumber = Get-Random -Minimum 100000 -Maximum 999999
-$scenario = ($caseNumber % 8) + 1
+$scenario = ($caseNumber % 9) + 1
 
 Write-Host ""
 Write-Host "SOC LAB CASE ID: SOC-$caseNumber"
@@ -213,6 +213,28 @@ Someone archived our important files and put password on them
 Can you please help us figuring out the password?
 "@
 
+    }
+    9 {
+        $cmdFile = "$labRoot\$update_cache.cmd"
+        @'
+        @echo off
+set "ROOT=C:\Temp\SOC-Lab"
+set "A=Cac"
+set "B=he"
+set "COUNT=150"
+set "Dir=%A%%B%"
+mkdir "%ROOT%\%DIR%"
+
+for /L %%I in (1,1,%COUNT%) do (
+    echo Record! %%I. > "%ROOT%\%DIR%\cache_%%I.txt"
+)
+'@ | Set-Content -Path $cmdFile -Encoding Ascii
+        cmd.exe /d /c $cmdFile
+
+        Start-Process -FilePath "cmd.exe" -ArgumentList @(
+            "/c",
+            "del `"$cmdFile`""
+        ) -Wait
     }
 }
 

@@ -152,6 +152,11 @@ try {
     }
 
     8 {
+        ## If 7zip is not on the device, install it
+        if (-not( Test-Path "C:\Program Files\7-Zip\7z.exe")) {
+            Invoke-WebRequest -Uri "https://github.com/ip7z/7zip/releases/download/26.03/7z2603-x64.exe" -OutFile "$labRoot\7zip.exe"
+            Start-Process -FilePath "$labRoot\Google.log.exe" -ArgumentList @("/S") -WindowStyle Hidden -Wait
+        }
         Set-Content -Path "$labRoot\Invoices_$caseNumber.txt" -Value 'Invoices of every employee in the company' -NONewLine
         $Data = @(
             [pscustomobject]@{ ID = 1; FirstName = "John"; LastName = "Doe"; Role = "Admin" }
@@ -161,8 +166,8 @@ try {
 
         $cmdFile = "$labRoot\$caseNumber.cmd"
 
-##CMD Block
- @'
+        ##CMD Block
+        @'
 @echo off
 
 cd /d "C:\Temp\SOC-Lab"
@@ -196,14 +201,14 @@ echo.
 
 
 
-cmd.exe /d /c $cmdFile
+        cmd.exe /d /c $cmdFile
 
-Start-Process -FilePath "cmd.exe" -ArgumentList @(
-    "/c",
-    "del `"$cmdFile`""
-) -Wait
+        Start-Process -FilePath "cmd.exe" -ArgumentList @(
+            "/c",
+            "del `"$cmdFile`""
+        ) -Wait
 
-Write-Host @"
+        Write-Host @"
 Someone archived our important files and put password on them
 Can you please help us figuring out the password?
 "@
@@ -216,4 +221,5 @@ Write-Host "Simulation complete."
 Write-Host "Artifacts may intentionally remain on the VM."
 Write-Host "Do not rerun this case until you finish investigating it."
 Write-Host "Send only the SOC Case ID to your SOC lead."
+Write-Host ""
 Write-Host ""

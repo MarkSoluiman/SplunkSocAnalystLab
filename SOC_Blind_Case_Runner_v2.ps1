@@ -155,7 +155,7 @@ try {
         ## If 7zip is not on the device, install it
         if (-not( Test-Path "C:\Program Files\7-Zip\7z.exe")) {
             Invoke-WebRequest -Uri "https://github.com/ip7z/7zip/releases/download/26.03/7z2603-x64.exe" -OutFile "$labRoot\7zip.exe"
-            Start-Process -FilePath "$labRoot\Google.log.exe" -ArgumentList @("/S") -WindowStyle Hidden -Wait
+            Start-Process -FilePath "$labRoot\7zip.exe" -ArgumentList @("/S") -WindowStyle Hidden -Wait
         }
         Set-Content -Path "$labRoot\Invoices_$caseNumber.txt" -Value 'Invoices of every employee in the company' -NONewLine
         $Data = @(
@@ -215,7 +215,7 @@ Can you please help us figuring out the password?
 
     }
     9 {
-        $cmdFile = "$labRoot\$update_cache.cmd"
+        $cmdFile = "$labRoot\update_cache.cmd"
         @'
         @echo off
 set "ROOT=C:\Temp\SOC-Lab"

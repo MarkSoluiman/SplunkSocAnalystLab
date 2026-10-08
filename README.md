@@ -20,6 +20,6 @@ You need to install Sysmon on your Windows virtual machine. To install Sysmon, f
 2. Make sure to copy the inputs.conf file to this path: C:\Program Files\Splunk\etc\system\local. This will allow Splunk to read events from multiple sources.
 3. Restart Splunk by running this command: `& "C:\Program Files\Splunk\bin\splunk.exe" restart`
 4. Open ChatGPT or any other AI tool of your choosing, and give it the **SOC_Analyst_Lab_Lead_Master_Prompt.txt** file alongside the two PowerShell files (Runner and Cleanup).
-5. Run the Runner code file using PowerShell: `.\SOC_Blind_Case_Runner_v2.ps1`. This should emit a SOC case code; feed it to the AI tool that you are using.
+5. Run the Runner code file using PowerShell as an **Administrator**: `.\SOC_Blind_Case_Runner_v2.ps1`. This should emit a SOC case code; feed it to the AI tool that you are using.
 6. Investigate the events that the Runner code produced.
 7. Have fun.

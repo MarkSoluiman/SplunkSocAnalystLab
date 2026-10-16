@@ -7,6 +7,8 @@ New-Item -ItemType Directory -Path $labRoot -Force | Out-Null
 $caseNumber = Get-Random -Minimum 100000 -Maximum 999999
 $scenario = ($caseNumber % 9) + 1
 
+$username=Read-Host -Prompt 'Input your name'
+$useremail=Read-Host -Prompt 'Input your email'
 Write-Host ""
 Write-Host "SOC LAB CASE ID: SOC-$caseNumber"
 Write-Host "Start time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
@@ -257,3 +259,4 @@ Write-Host "Do not rerun this case until you finish investigating it."
 Write-Host "Send only the SOC Case ID to your SOC lead."
 Write-Host ""
 Write-Host ""
+python.exe .\send_email.py $username $useremail

